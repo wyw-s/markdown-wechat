@@ -6,16 +6,16 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }} - ${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository == 'doocs/md'
+    if: github.repository == 'wyw-s/markdown-wechat' || github.repository_owner == 'wyw-s'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
@@ -32,17 +32,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Determine build command
-        id: build-command
-        run: |
-          if [[ "${{ secrets.BUILD_COMMAND }}" == "build:h5-netlify" ]]; then
-            echo "BUILD_COMMAND=build:h5-netlify" >> $GITHUB_ENV
-          else
-            echo "BUILD_COMMAND=build" >> $GITHUB_ENV
-          fi
-
       - name: Run build
-        run: pnpm web ${{ env.BUILD_COMMAND }}
+        run: pnpm web build
 
       - name: Generate CNAME
         run: |
