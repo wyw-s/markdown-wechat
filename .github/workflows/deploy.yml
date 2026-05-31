@@ -33,7 +33,7 @@ jobs:
         run: pnpm install
 
       - name: Run build
-        run: pnpm web build
+        run: pnpm web build:only
 
       - name: Generate CNAME
         run: |
