@@ -5,19 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository == 'wyw-s/markdown-wechat' || github.repository_owner == 'wyw-s'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
       - name: Set up node
         uses: actions/setup-node@v6
@@ -40,21 +34,10 @@ jobs:
           mkdir -p apps/web/dist
           echo "markdown.yahweh.top" > apps/web/dist/CNAME
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: apps/web/dist
-
-  deploy-pages:
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github_pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: dist
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository-name: wyw-s/markdown-wechat
